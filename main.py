@@ -33,7 +33,7 @@ GENERATION_PATTERN = re.compile(
 )
 
 CRC32C_PATTERN = re.compile(
-    r"^[0-9a-fA-F]{8}$"
+    r"^[0-9a-f]{8}$"
 )
 
 TIME_PATTERN = re.compile(
@@ -319,6 +319,9 @@ def validate_policy(policy):
     if threshold > 1:
         return False
 
+    if minimum > maximum:
+        return False
+
     return True
 
 
@@ -562,7 +565,7 @@ def validate_object(obj):
     )
 
     fetched_generation = obj.get(
-        "fetchedGeneration"
+        "fetchGeneration"
     )
 
     generation_valid = (
@@ -679,10 +682,7 @@ def validate_object(obj):
             content.encode("utf-8")
         )
 
-        if (
-            calculated_crc.lower()
-            != crc_value.lower()
-        ):
+        if calculated_crc != crc_value:
 
             reasons.append(
                 "CRC32C_MISMATCH"
